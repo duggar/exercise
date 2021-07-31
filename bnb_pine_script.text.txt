@@ -1,0 +1,21 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © gc1223
+
+    
+//@version=4
+strategy("B&B Strategy", overlay=true)
+fastLength = input(12)
+slowlength = input(26)
+MACDLength = input(9)
+MACD = ema(close, fastLength) - ema(close, slowlength)
+aMACD = ema(MACD, MACDLength)
+delta = MACD - aMACD
+longCondition = crossover(close, ema(close, 20)) and crossover(delta, 0)
+exitlong = crossunder(delta,delta[1]) 
+shortCondition = (crossunder(close, ema(close, 20)) and crossunder(delta, 0)) 
+if (longCondition)
+	strategy.entry("B&B_LE", strategy.long, comment="MacdLE")
+strategy.close(id="B&B_LE", when=exitlong)
+if (shortCondition)
+	strategy.entry("B&B_SE", strategy.short, comment="MacdSE")
+//plot(strategy.equity, title="equity", color=color.red, linewidth=2, style=plot.style_areabr)
